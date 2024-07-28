@@ -1,9 +1,8 @@
 import axios from "axios";
 import { Todo } from "../models/Todo";
-import { API_URL } from "../constants/config.ts";
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 export const getTodos = () => api.get<Todo[]>('/TodoItems');

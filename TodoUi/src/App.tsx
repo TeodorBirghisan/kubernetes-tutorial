@@ -1,11 +1,17 @@
-import './App.css'
+import React from 'react';
+import TodoList from './components/TodoList';
+import { CssBaseline, Container } from '@mui/material';
+import './App.css';
 
-function App() {
+const App: React.FC = () => {
   return (
     <>
-      hello world
+      <CssBaseline />
+      <Container className="container">
+        <TodoList />
+      </Container>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

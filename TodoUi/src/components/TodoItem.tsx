@@ -15,7 +15,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, fetchTodos }) => {
   const [editOpen, setEditOpen] = useState(false);
 
   const handleToggle = async () => {
-    await editTodo(todo.id, { isComplete: !todo.isComplete });
+    await editTodo(todo.id, { ...todo, isComplete: !todo.isComplete });
     fetchTodos();
   };
 

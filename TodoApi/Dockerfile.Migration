@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+
+# Copy csproj and restore as distinct layers
+COPY ["TodoApi.csproj", "./"]
+RUN dotnet restore "./TodoApi.csproj"
+
+# Install the dotnet-ef tool
+RUN dotnet tool install --global dotnet-ef
+
+# Ensure the dotnet tools are in the PATH
+ENV PATH="${PATH}:/root/.dotnet/tools"
+
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "./TodoApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# Copy the entrypoint script and make it executable
+COPY entrypoint.migration.sh /app/entrypoint.migration.sh
+RUN chmod +x /app/entrypoint.migration.sh
+
+ENTRYPOINT ["/app/entrypoint.migration.sh"]

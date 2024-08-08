@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-deployment # Name of the deployment
+spec:
+  selector:
+    matchLabels:
+      app: ui # Label to identify the pods managed by this deployment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ui # Label to identify the pods managed by this deployment
+    spec:
+      containers:
+        - name: ui # Name of the container
+          image: todo-ui:latest # Use the locally built Docker image
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000 # Port the container listens on
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "500m"
+            limits:
+              memory: "256Mi"
+              cpu: "1000m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui-service
+spec:
+  selector:
+    app: ui
+  ports:
+    - protocol: TCP
+      port: 80 # Port the service listens on
+      targetPort: 80 # Port the container listens on
+      nodePort: 30000
+  type: NodePort

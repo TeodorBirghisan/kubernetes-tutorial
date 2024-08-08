@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment # Name of the deployment
+spec:
+  selector:
+    matchLabels:
+      app: api # Label to identify the pods managed by this deployment 
+  replicas: 1 # Number of pod replicas
+  template:
+    metadata:
+      labels:
+        app: api # Label to identify the pods managed by this deployment
+    spec:
+      initContainers:  # Init container for running database migration before starting the main container
+      - name: db-migration
+        image: todo-db-migration:latest  # The migration Docker image
+        imagePullPolicy: Never  # Ensures that Kubernetes uses the local image and doesn't try to pull from a registry
+        env:
+          - name: ConnectionStrings__DefaultConnection
+            valueFrom:
+              secretKeyRef:
+                name: api-secret       # Name of the Kubernetes Secret
+                key: DefaultConnection # Key in the Kubernetes Secret
+        command: ["dotnet", "ef", "database", "update"]  # Command to run the migration
+      containers:
+        - name: api              # Name of the container
+          image: todo-api:latest # Name of the local API Docker image
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080 # Port the container listens on
+          resources:
+            requests:
+              memory: "256Mi"  # Minimum memory required
+              cpu: "500m"      # Minimum CPU required
+            limits:
+              memory: "512Mi"  # Maximum memory allowed
+              cpu: "1000m"     # Maximum CPU allowed
+          env:
+            - name: ConnectionStrings__DefaultConnection
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: DefaultConnection
+          # - name: ConnectionStrings__DefaultConnection # Connection string environment variable
+          #   valueFrom:
+          #     secretKeyRef:
+          #       name: api-secret      # Name of the Kubernetes Secret
+          #       key: DefaultConnection  # Key in the Kubernetes Secret
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: 8080
+          #   initialDelaySeconds: 30
+          #   periodSeconds: 10
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: 8080
+          #   initialDelaySeconds: 30
+          #   periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service  # Name of the service
+spec:
+  selector:
+    app: api  # Label to identify the pods managed by this service
+  ports:
+  - protocol: TCP
+    port: 8080  # Port the service listens on
+    targetPort: 8080  # Port the container listens on
+    nodePort: 30001  # NodePort in the range 30000-32767
+  type: NodePort  # Expose the service on a port on each Node

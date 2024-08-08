@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mssql-pv # Name of the persistent volume
+spec:
+  capacity:
+    storage: 1Gi # Size of the storage
+  accessModes:
+    - ReadWriteOnce # Access mode of the storage
+  hostPath:
+    path: /mnt/data/mssql # Path on the host where the data will be stored

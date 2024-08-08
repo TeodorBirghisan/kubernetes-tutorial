@@ -16,8 +16,4 @@ COPY . .
 WORKDIR "/src/."
 RUN dotnet build "./TodoApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Copy the entrypoint script and make it executable
-COPY entrypoint.migration.sh /app/entrypoint.migration.sh
-RUN chmod +x /app/entrypoint.migration.sh
-
-ENTRYPOINT ["/app/entrypoint.migration.sh"]
+ENTRYPOINT ["dotnet", "ef", "database", "update"]

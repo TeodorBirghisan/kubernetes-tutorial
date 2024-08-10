@@ -19,6 +19,10 @@ builder.Services.AddDbContext<TodoContext>(opt =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+// Add Health Checks
+builder.Services.AddHealthChecks();
+
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
@@ -34,4 +38,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
+
+// Map the health checks endpoint
+app.MapHealthChecks("/health");
+
 app.Run();

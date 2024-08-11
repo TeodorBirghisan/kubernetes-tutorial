@@ -14,8 +14,8 @@ spec:
     spec:
       initContainers:  # Init container for running database migration before starting the main container
       - name: db-migration
-        image: todo-db-migration:latest  # The migration Docker image
-        imagePullPolicy: Never  # Ensures that Kubernetes uses the local image and doesn't try to pull from a registry
+        image: birghi/kubernetes-tutorial:migration-latest  # Name of the Docker Hub Image
+        # imagePullPolicy: Never # Ensures that Kubernetes uses the local image and doesn't try to pull from a registry
         env:
           - name: ConnectionStrings__DefaultConnection
             valueFrom:
@@ -24,9 +24,9 @@ spec:
                 key: DefaultConnection # Key in the Kubernetes Secret
         command: ["dotnet", "ef", "database", "update"]  # Command to run the migration
       containers:
-        - name: api              # Name of the container
-          image: todo-api:latest # Name of the local API Docker image
-          imagePullPolicy: Never
+        - name: api                                    # Name of the container
+          image: birghi/kubernetes-tutorial:api-latest # Name of the Docker Hub Image
+          # imagePullPolicy: Never
           ports:
             - containerPort: 8080 # Port the container listens on
           resources:

@@ -39,7 +39,6 @@ services:
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    user: "10001:0"
     environment:
       SA_PASSWORD: "YourStrong!Passw0rd"
       ACCEPT_EULA: "Y"

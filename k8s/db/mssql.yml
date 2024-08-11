@@ -26,13 +26,20 @@ spec:
               key: SA_PASSWORD
         readinessProbe:
           exec:
-            command: ["./opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "$$SA_PASSWORD", "-C", "-Q", "SELECT 1"]
+            command:
+              - /bin/bash
+              - -c
+              - /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$$SA_PASSWORD" -C -Q "SELECT 1"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
         resources:
           requests:
-            memory: "1Gi"
+            memory: "2Gi"
             cpu: "500m"
           limits:
-            memory: "1Gi"
+            memory: "3Gi"
             cpu: "1"
         volumeMounts:
         - name: mssql-storage

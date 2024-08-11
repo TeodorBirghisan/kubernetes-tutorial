@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: ui # Name of the container
-          image: birghi/kubernetes-tutorial:ui-latest # Public Docker Hub Image
+          image: birghi/kubernetes-tutorial:ui-latest # Name of the Docker Hub Image
           # imagePullPolicy: Never                    # Ensures that Kubernetes uses the local image and doesn't try to pull from a registry
           ports:
             - containerPort: 3000 # Port the container listens on
